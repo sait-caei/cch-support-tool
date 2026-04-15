@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Contact Hours Support Tool</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --color-bg: #ffffff;
+    --color-bg-secondary: #f7f6f3;
+    --color-bg-tertiary: #f0ede8;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b6a66;
+    --color-text-tertiary: #9b9a96;
+    --color-border: rgba(0,0,0,0.12);
+    --color-border-hover: rgba(0,0,0,0.25);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    --purple-50: #EEEDFE;
+    --purple-100: #CECBF6;
+    --purple-400: #7F77DD;
+    --purple-600: #534AB7;
+    --purple-800: #3C3489;
+    --purple-900: #26215C;
+
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #444441;
+
+    --coral-50: #FAECE7;
+    --coral-100: #F5C4B3;
+    --coral-600: #993C1D;
+    --coral-800: #712B13;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 1.75rem;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--purple-800);
+    background: var(--purple-50);
+    border: 0.5px solid var(--purple-100);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 0.75rem;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+
+  header p {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 640px;
+    background: var(--color-bg);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar-track {
+    flex: 1;
+    height: 3px;
+    background: var(--color-border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--purple-400);
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .crumb-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .crumb-item {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+
+  .crumb-sep {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    opacity: 0.5;
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s;
+    font-family: var(--font);
+  }
+
+  .btn-ghost:hover { color: var(--color-text-primary); }
+  .btn-ghost:disabled { opacity: 0.35; cursor: default; }
+
+  .question {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.45;
+    margin-bottom: 1.25rem;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 1.5rem;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    user-select: none;
+  }
+
+  .option:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border-hover);
+  }
+
+  .option.selected {
+    border-color: var(--purple-400);
+    background: var(--purple-50);
+  }
+
+  .option-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border-hover);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.12s, background 0.12s;
+  }
+
+  .option.selected .option-radio {
+    border-color: var(--purple-600);
+    background: var(--purple-600);
+  }
+
+  .option-radio-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+
+  .option.selected .option-radio-dot { opacity: 1; }
+
+  .option-label {
+    font-size: 15px;
+    color: var(--color-text-primary);
+    line-height: 1.35;
+  }
+
+  .option.selected .option-label { color: var(--purple-900); }
+
+  .btn-continue {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font);
+    background: var(--purple-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-continue:hover { background: var(--purple-800); }
+  .btn-continue:active { transform: scale(0.98); }
+  .btn-continue:disabled {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-tertiary);
+    cursor: default;
+    border: 0.5px solid var(--color-border);
+  }
+
+  .outcome-card {
+    text-align: center;
+    padding: 0.5rem 0 0.5rem;
+  }
+
+  .outcome-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin: 0 auto 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .outcome-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .outcome-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .outcome-desc {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    max-width: 420px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 26px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-action:hover { opacity: 0.88; }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--color-border);
+    margin: 1.25rem 0;
+  }
+
+  .restart-link {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .restart-link:hover { color: var(--color-text-primary); }
+
+  footer {
+    margin-top: 2rem;
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">Course contact hours</div>
+  <h1>Course Contact Hours Support Tool</h1>
+  <p>This tool helps identify where contact time can shift to independent learning without changing course outlines.</p>
+</header>
+
+<div class="progress-bar-wrap" id="progressWrap" style="display:none">
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+  <span class="progress-label" id="progressLabel">Step 1</span>
+</div>
+
+<div class="card" id="app"></div>
+
+<footer>Course Hour Reduction Support &mdash; Internal Use</footer>
+
+<script>
+const nodes = {
+  start: {
+    id: 'start',
+    q: 'Does your planned change require modifying outcomes, assessment types, or assessment weighting?',
+    options: [
+      { label: 'Yes', next: 'consult' },
+      { label: 'No', next: 'contact_time' },
+      { label: 'Unsure', next: 'chatbot' }
+    ]
+  },
+  contact_time: {
+    id: 'contact_time',
+    q: 'Where is most of your contact time currently spent?',
+    options: [
+      { label: 'Explaining foundational concepts', next: 'explaining' },
+      { label: 'Running demonstrations', next: 'demos' },
+      { label: 'Facilitating in-class activities', next: 'activities' },
+      { label: 'Managing multiple assessments', next: 'assessments' },
+      { label: 'Covering content that overlaps with another course', next: 'overlap' },
+      { label: 'I am not sure', next: 'mapping' }
+    ]
+  },
+  explaining: {
+    id: 'explaining',
+    q: 'Could students learn the introductory portion of this material before class?',
+    options: [
+      { label: 'Yes', next: 'foundational_repetitive' },
+      { label: 'No', next: 'keep_explain' }
+    ]
+  },
+  foundational_repetitive: {
+    id: 'foundational_repetitive',
+    q: 'Is the material foundational but repetitive across weeks?',
+    options: [
+      { label: 'Yes', next: 'independent_learning' },
+      { label: 'No', next: 'program_dup_explain' }
+    ]
+  },
+  program_dup_explain: {
+    id: 'program_dup_explain',
+    q: 'Is the material repeated elsewhere in the program?',
+    options: [
+      { label: 'Yes', next: 'remove_duplication' },
+      { label: 'No', next: 'keep_explain' }
+    ]
+  },
+  demos: {
+    id: 'demos',
+    q: 'Do students mainly observe rather than practice during these demonstrations?',
+    options: [
+      { label: 'Yes', next: 'demo_safety' },
+      { label: 'No', next: 'keep_demo' }
+    ]
+  },
+  demo_safety: {
+    id: 'demo_safety',
+    q: 'Do demonstrations require safety supervision, equipment access, or immediate instructor corrections?',
+    options: [
+      { label: 'Yes', next: 'keep_demo' },
+      { label: 'No', next: 'demo_explain' }
+    ]
+  },
+  demo_explain: {
+    id: 'demo_explain',
+    q: 'Could the explanation component be completed before class?',
+    options: [
+      { label: 'Yes', next: 'rethink_demos' },
+      { label: 'No', next: 'keep_demo' }
+    ]
+  },
+  activities: {
+    id: 'activities',
+    q: 'Are these activities primarily focused on reviewing concepts or preparing for later work?',
+    options: [
+      { label: 'Yes', next: 'activities_independent' },
+      { label: 'No', next: 'activities_feedback' }
+    ]
+  },
+  activities_independent: {
+    id: 'activities_independent',
+    q: 'Could students complete these activities independently with clear instructions?',
+    options: [
+      { label: 'Yes', next: 'transition_activities' },
+      { label: 'No', next: 'activities_feedback' }
+    ]
+  },
+  activities_feedback: {
+    id: 'activities_feedback',
+    q: 'Do students need real-time instructor feedback while completing these activities?',
+    options: [
+      { label: 'Yes', next: 'keep_activities' },
+      { label: 'No', next: 'transition_activities' }
+    ]
+  },
+  assessments: {
+    id: 'assessments',
+    q: 'Are multiple assessments measuring the same outcome at the same level of complexity?',
+    options: [
+      { label: 'Yes', next: 'over_assessment' },
+      { label: 'No', next: 'small_graded' }
+    ]
+  },
+  small_graded: {
+    id: 'small_graded',
+    q: 'Are small graded activities mainly used to confirm students completed preparation work?',
+    options: [
+      { label: 'Yes', next: 'reduce_assessment' },
+      { label: 'No', next: 'keep_assessments' }
+    ]
+  },
+  over_assessment: {
+    id: 'over_assessment',
+    q: 'Could some lower-level checks become practice activities instead of graded tasks within the existing assessment structure?',
+    options: [
+      { label: 'Yes', next: 'reduce_assessment' },
+      { label: 'No', next: 'keep_assessments' }
+    ]
+  },
+  overlap: {
+    id: 'overlap',
+    q: 'Is this content fully taught elsewhere in the program?',
+    options: [
+      { label: 'Yes', next: 'remove_duplication' },
+      { label: 'No', next: 'overlap_reduce' }
+    ]
+  },
+  overlap_reduce: {
+    id: 'overlap_reduce',
+    q: 'Could this content be reduced to a short review instead of full instruction?',
+    options: [
+      { label: 'Yes', next: 'remove_duplication' },
+      { label: 'No', next: 'keep_class' }
+    ]
+  },
+  mapping: {
+    id: 'mapping',
+    q: 'Would mapping what students do before, during, and after class help identify opportunities to shift learning outside contact time?',
+    options: [
+      { label: 'Yes', next: 'weekly_rhythm' },
+      { label: 'No', next: 'chatbot' }
+    ]
+  },
+  consult: {
+    id: 'consult', outcome: true, type: 'leadership',
+    title: 'Consult school leadership',
+    desc: 'Your planned change involves modifying outcomes, assessment types, or assessment weighting. Please consult your school leadership before proceeding.'
+  },
+  chatbot: {
+    id: 'chatbot', outcome: true, type: 'chatbot',
+    title: 'Course Hour Reduction Support Chatbot',
+    desc: 'The chatbot can help you explore your options and identify the best path forward for your course.'
+  },
+  independent_learning: {
+    id: 'independent_learning', outcome: true, type: 'resource',
+    title: 'Independent learning',
+    desc: 'This material is a good candidate for shifting to independent pre-class work. Students can learn foundational, repetitive content on their own before class.'
+  },
+  remove_duplication: {
+    id: 'remove_duplication', outcome: true, type: 'resource',
+    title: 'Removing program duplication',
+    desc: 'This content is repeated elsewhere in the program. Consider removing it to reduce overlap and free up contact time.'
+  },
+  keep_explain: {
+    id: 'keep_explain', outcome: true, type: 'keep',
+    title: 'Keep explanations in class',
+    desc: 'This material benefits from in-class delivery. No change is recommended at this time.'
+  },
+  rethink_demos: {
+    id: 'rethink_demos', outcome: true, type: 'resource',
+    title: 'Rethinking in-class demonstrations',
+    desc: 'The explanation component of these demonstrations could be moved before class, freeing up contact time for hands-on practice.'
+  },
+  keep_demo: {
+    id: 'keep_demo', outcome: true, type: 'keep',
+    title: 'Keep demonstrations in class',
+    desc: 'These demonstrations require in-person supervision, equipment access, or instructor correction and should remain in class.'
+  },
+  transition_activities: {
+    id: 'transition_activities', outcome: true, type: 'resource',
+    title: 'Transitioning in-class activities to independent learning',
+    desc: 'These activities are strong candidates for independent work. Students can complete them outside class with clear instructions.'
+  },
+  keep_activities: {
+    id: 'keep_activities', outcome: true, type: 'keep',
+    title: 'Keep activities in class',
+    desc: 'Students need real-time instructor feedback for these activities. They should remain in class.'
+  },
+  reduce_assessment: {
+    id: 'reduce_assessment', outcome: true, type: 'resource',
+    title: 'Reducing over-assessment',
+    desc: 'Some graded activities could become ungraded practice. This reduces assessment load while maintaining learning opportunities.'
+  },
+  keep_assessments: {
+    id: 'keep_assessments', outcome: true, type: 'keep',
+    title: 'Keep current assessment structure',
+    desc: 'Your current assessment structure appears appropriate. No change is recommended at this time.'
+  },
+  keep_class: {
+    id: 'keep_class', outcome: true, type: 'keep',
+    title: 'Keep as in-class instruction',
+    desc: 'This content is best delivered in class. No change is recommended at this time.'
+  },
+  weekly_rhythm: {
+    id: 'weekly_rhythm', outcome: true, type: 'resource',
+    title: 'Building a weekly learning rhythm',
+    desc: 'Mapping what students do before, during, and after class can reveal where learning can shift outside contact time.'
+  }
+};
+
+const TOTAL_STEPS = 5;
+let history = [];
+let current = 'start';
+let pendingNext = null;
+
+const icons = {
+  chatbot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  leadership: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  resource: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  keep: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+};
+
+const outcomeStyles = {
+  chatbot:    { iconBg: '#EEEDFE', iconColor: '#534AB7', btnBg: '#534AB7', btnColor: '#fff' },
+  leadership: { iconBg: '#FAECE7', iconColor: '#993C1D', btnBg: '#993C1D', btnColor: '#fff' },
+  resource:   { iconBg: '#E1F5EE', iconColor: '#0F6E56', btnBg: '#0F6E56', btnColor: '#fff' },
+  keep:       { iconBg: '#F1EFE8', iconColor: '#5F5E5A', btnBg: '#5F5E5A', btnColor: '#fff' }
+};
+
+function updateProgress() {
+  const wrap = document.getElementById('progressWrap');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  if (history.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'flex';
+  const pct = Math.min(Math.round((history.length / TOTAL_STEPS) * 100), 95);
+  fill.style.width = pct + '%';
+  label.textContent = 'Step ' + history.length;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const node = nodes[current];
+  pendingNext = null;
+  updateProgress();
+
+  if (node.outcome) {
+    const s = outcomeStyles[node.type] || outcomeStyles.keep;
+    const icon = icons[node.type] || icons.keep;
+    const showBtn = node.type === 'chatbot' || node.type === 'resource';
+
+    app.innerHTML = `
+      <div class="outcome-card">
+        <div class="outcome-icon" style="background:${s.iconBg};color:${s.iconColor}">${icon}</div>
+        <p class="outcome-title">${node.title}</p>
+        <p class="outcome-desc">${node.desc}</p>
+        ${showBtn ? `<button class="btn-action" style="background:${s.btnBg};color:${s.btnColor}" onclick="alert('This would open the chatbot or linked resource.')">Open resource &rarr;</button><br>` : ''}
+        <hr class="divider">
+        <button class="restart-link" onclick="restart()">&larr; Start over</button>
+      </div>`;
+    return;
+  }
+
+  const crumbs = history.length > 0
+    ? `<div class="crumb-row">${history.map(h => `<span class="crumb-item">${shorten(nodes[h.nodeId].q)}</span><span class="crumb-sep">&rsaquo;</span>`).join('')}<span class="crumb-item" style="color:var(--color-text-secondary)">Current</span></div>`
+    : '';
+
+  const backBtn = history.length > 0
+    ? `<button class="btn-ghost" onclick="goBack()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Back</button>`
+    : `<span></span>`;
+
+  app.innerHTML = `
+    ${crumbs}
+    <div class="nav-row">
+      ${backBtn}
+      <button class="restart-link" onclick="restart()" style="${history.length === 0 ? 'visibility:hidden' : ''}">Start over</button>
+    </div>
+    <p class="question">${node.q}</p>
+    <div class="options" id="opts">
+      ${node.options.map((opt, i) => `
+        <div class="option" id="opt${i}" onclick="selectOpt(${i},'${escQ(opt.label)}','${opt.next}')">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <span class="option-label">${opt.label}</span>
+        </div>
+      `).join('')}
+    </div>
+    <button class="btn-continue" id="nextBtn" disabled onclick="advance()">
+      Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>`;
+}
+
+function escQ(s) { return s.replace(/'/g,"&#39;"); }
+function shorten(s) { return s.length > 38 ? s.slice(0,35) + '…' : s; }
+
+function selectOpt(i, label, next) {
+  document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+  document.getElementById('opt'+i).classList.add('selected');
+  document.getElementById('nextBtn').disabled = false;
+  pendingNext = { label, next };
+}
+
+function advance() {
+  if (!pendingNext) return;
+  history.push({ nodeId: current, option: pendingNext.label });
+  current = pendingNext.next;
+  pendingNext = null;
+  render();
+}
+
+function goBack() {
+  if (!history.length) return;
+  current = history.pop().nodeId;
+  render();
+}
+
+function restart() {
+  history = [];
+  current = 'start';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
